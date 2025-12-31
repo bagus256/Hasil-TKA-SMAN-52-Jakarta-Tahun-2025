@@ -1,172 +1,69 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hasil TKA 2025 - SMAN 52 Jakarta</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hasil TKA 2025 - SMAN 52 Jakarta</title>
 
-  <style>
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background-color: #f5f6fa;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      margin: 0;
-    }
+<script src="xlsx.full.min.js"></script>
 
-    .card {
-      background: #ffffff;
-      padding: 2rem;
-      max-width: 720px;
-      width: 100%;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-    }
-
-    img {
-      width: 100px;
-      margin-bottom: 1rem;
-    }
-
-    h1 {
-      font-size: 1.3rem;
-      margin-bottom: 0.3rem;
-    }
-
-    h2 {
-      font-size: 1rem;
-      font-weight: normal;
-      color: #555;
-      margin-bottom: 1.5rem;
-    }
-
-    input {
-      width: 100%;
-      padding: 0.6rem;
-      margin-bottom: 0.8rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    button {
-      width: 100%;
-      padding: 0.6rem;
-      font-size: 1rem;
-      background-color: #0066cc;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #004d99;
-    }
-
-    #hasil {
-      margin-top: 1.2rem;
-    }
-
-    .nilai {
-      border-bottom: 1px dashed #ddd;
-      padding: 0.3rem 0;
-    }
-
-    footer {
-      margin-top: 1rem;
-      font-size: 0.85rem;
-      color: #777;
-    }
-  </style>
+<style>
+body{font-family:Arial;background:#f5f6fa;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0}
+.card{background:#fff;padding:2rem;max-width:720px;width:100%;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.08)}
+input,button{width:100%;padding:.6rem;margin-bottom:.8rem;font-size:1rem}
+button{background:#0066cc;color:#fff;border:none;border-radius:6px}
+.nilai{border-bottom:1px dashed #ccc;padding:.3rem 0}
+</style>
 </head>
 
 <body>
-  <div class="card">
-    <img src="logo.jpg" alt="Logo SMAN 52 Jakarta">
+<div class="card">
+<h2>Hasil TKA 2025<br>SMAN 52 Jakarta</h2>
 
-    <h1>Pengumuman Hasil TKA</h1>
-    <h2>Kelas XII • Tahun 2025<br>SMAN 52 Jakarta</h2>
+<input id="nama" placeholder="Nama Lengkap">
+<input id="tgl" type="date">
+<button onclick="cek()">Cek Hasil</button>
 
-    <form onsubmit="cekTKA(event)">
-      <input type="text" id="nama" placeholder="Nama Lengkap" required>
-      <input type="date" id="tgl" required>
-      <button type="submit">Cek Hasil TKA</button>
-    </form>
+<div id="hasil"></div>
+</div>
 
-    <div id="hasil"></div>
+<script>
+let DATA = [];
 
-    <footer>© 2025 SMAN 52 Jakarta</footer>
-  </div>
+fetch("data_tka.xlsx")
+.then(res => res.arrayBuffer())
+.then(buf => {
+  const wb = XLSX.read(buf, {type:"array"});
+  const ws = wb.Sheets[wb.SheetNames[0]];
+  DATA = XLSX.utils.sheet_to_json(ws);
+});
 
-  <script>
-    /* =====================================================
-       DATA TKA
-       Format KEY: "NAMA|YYYY-MM-DD"
-       ===================================================== */
+function cek(){
+  const nama = document.getElementById("nama").value.trim().toUpperCase();
+  const tgl = document.getElementById("tgl").value;
+  const h = document.getElementById("hasil");
 
-    const DATA_TKA = {
-      "ABDUL JABARUDIN|2007-04-12": {
-        nama: "ABDUL JABARUDIN",
-        tgl: "2007-04-12",
-        nilai: {
-          "Literasi": 78,
-          "Numerasi": 82,
-          "Bahasa Inggris": 80
-        }
-      },
-      "AISYAH DWIYANTI|2007-08-21": {
-        nama: "AISYAH DWIYANTI",
-        tgl: "2007-08-21",
-        nilai: {
-          "Literasi": 85,
-          "Numerasi": 79,
-          "Bahasa Inggris": 88
-        }
-      }
-      // ⬇⬇⬇ TAMBAHKAN DATA SISWA LAIN DI SINI ⬇⬇⬇
-    };
+  const s = DATA.find(r =>
+    r["Nama Lengkap"].toUpperCase() === nama &&
+    r["Tanggal Lahir"] === tgl
+  );
 
-    function cekTKA(e) {
-      e.preventDefault();
+  if(!s){
+    h.innerHTML = "<span style='color:red'>Data tidak ditemukan</span>";
+    return;
+  }
 
-      const nama = document.getElementById("nama").value.trim().toUpperCase();
-      const tgl = document.getElementById("tgl").value;
-      const hasilDiv = document.getElementById("hasil");
+  let out = `<b>Nama:</b> ${s["Nama Lengkap"]}<br>
+             <b>Tanggal Lahir:</b> ${s["Tanggal Lahir"]}<hr>
+             <b>Nilai TKA:</b>`;
 
-      const key = nama + "|" + tgl;
-
-      if (!DATA_TKA[key]) {
-        hasilDiv.innerHTML = `
-          <span style="color:red;">
-            Data tidak ditemukan.<br>
-            Periksa kembali nama dan tanggal lahir.
-          </span>
-        `;
-        return;
-      }
-
-      const siswa = DATA_TKA[key];
-
-      let html = `
-        <strong>Nama:</strong> ${siswa.nama}<br>
-        <strong>Tanggal Lahir:</strong> ${siswa.tgl}
-        <hr>
-        <strong>Nilai TKA:</strong>
-      `;
-
-      for (const mapel in siswa.nilai) {
-        html += `
-          <div class="nilai">
-            <strong>${mapel}</strong>: ${siswa.nilai[mapel]}
-          </div>
-        `;
-      }
-
-      hasilDiv.innerHTML = html;
+  for(const k in s){
+    if(k !== "Nama Lengkap" && k !== "Tanggal Lahir"){
+      out += `<div class="nilai"><b>${k}</b>: ${s[k]}</div>`;
     }
-  </script>
+  }
+  h.innerHTML = out;
+}
+</script>
 </body>
 </html>
