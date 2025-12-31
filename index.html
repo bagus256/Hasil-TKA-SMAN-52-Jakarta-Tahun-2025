@@ -28,21 +28,50 @@ th{background:#eee}
 </div>
 </div>
 <script>
-let dataTKA=[]
-fetch('data_tka.json').then(r=>r.json()).then(d=>dataTKA=d);
+let dataTKA = [];
+
+fetch('data_tka.json')
+  .then(res => res.json())
+  .then(data => dataTKA = data);
+
+function normal(teks){
+  return teks
+    .toUpperCase()
+    .replace(/\s+/g,' ')
+    .replace(/\u00A0/g,' ')
+    .trim();
+}
+
 function cek(){
- const nama=document.getElementById('nama').value.trim().toUpperCase();
- const ttl=document.getElementById('ttl').value.trim();
- const s=dataTKA.find(x=>x.Nama.toUpperCase()===nama && x.TTL===ttl);
- if(!s){alert('Data tidak ditemukan');return;}
- let h='<tr>';
- Object.keys(s).forEach(k=>{if(!['No Urut','Nomor Peserta','NISN'].includes(k))h+=`<th>${k}</th>`})
- h+='</tr><tr>';
- Object.keys(s).forEach(k=>{if(!['No Urut','Nomor Peserta','NISN'].includes(k))h+=`<td>${s[k]}</td>`})
- h+='</tr>';
- document.getElementById('tabel').innerHTML=h;
- document.getElementById('hasil').classList.remove('hidden');
+  const nama = normal(document.getElementById('nama').value);
+  const ttl  = normal(document.getElementById('ttl').value);
+
+  const s = dataTKA.find(x =>
+    normal(x.Nama) === nama &&
+    normal(x.TTL)  === ttl
+  );
+
+  if(!s){
+    alert('Data tidak ditemukan. Pastikan Nama dan Tanggal Lahir sesuai.');
+    return;
+  }
+
+  let h = '<tr>';
+  Object.keys(s).forEach(k=>{
+    if(!['No Urut','Nomor Peserta','NISN'].includes(k)){
+      h += `<th>${k}</th>`;
+    }
+  });
+  h += '</tr><tr>';
+
+  Object.keys(s).forEach(k=>{
+    if(!['No Urut','Nomor Peserta','NISN'].includes(k)){
+      h += `<td>${s[k]}</td>`;
+    }
+  });
+  h += '</tr>';
+
+  document.getElementById('tabel').innerHTML = h;
+  document.getElementById('hasil').classList.remove('hidden');
 }
 </script>
-</body>
-</html>
