@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Pengumuman Hasil TKA SMAN 52 Jakarta 2025</title>
+<style>
+body{font-family:Arial;background:#f6f7fb}
+.container{max-width:720px;margin:50px auto;background:#fff;padding:30px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.logo{text-align:center;margin-bottom:20px}
+.logo img{width:90px}
+input,button{width:100%;padding:12px;margin-top:10px;border-radius:6px;border:1px solid #ccc}
+button{background:#1f3c88;color:#fff;border:none}
+table{width:100%;border-collapse:collapse;margin-top:20px}
+th,td{border:1px solid #ddd;padding:8px}
+th{background:#eee}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="logo"><img src="assets/logo-sman52.png"></div>
+<h2>Pengumuman Hasil TKA SMAN 52 Jakarta 2025</h2>
+<input id="nama" placeholder="Nama Lengkap">
+<input id="ttl" placeholder="Tempat, Tanggal Lahir">
+<button onclick="cek()">Cek Hasil TKA</button>
+<div id="hasil" class="hidden">
+<table id="tabel"></table>
+</div>
+</div>
+<script>
+let dataTKA=[]
+fetch('data_tka.json').then(r=>r.json()).then(d=>dataTKA=d);
+function cek(){
+ const nama=document.getElementById('nama').value.trim().toUpperCase();
+ const ttl=document.getElementById('ttl').value.trim();
+ const s=dataTKA.find(x=>x.Nama.toUpperCase()===nama && x.TTL===ttl);
+ if(!s){alert('Data tidak ditemukan');return;}
+ let h='<tr>';
+ Object.keys(s).forEach(k=>{if(!['No Urut','Nomor Peserta','NISN'].includes(k))h+=`<th>${k}</th>`})
+ h+='</tr><tr>';
+ Object.keys(s).forEach(k=>{if(!['No Urut','Nomor Peserta','NISN'].includes(k))h+=`<td>${s[k]}</td>`})
+ h+='</tr>';
+ document.getElementById('tabel').innerHTML=h;
+ document.getElementById('hasil').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
