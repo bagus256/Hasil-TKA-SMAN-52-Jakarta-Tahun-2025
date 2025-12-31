@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pengumuman Hasil TKA 2025 - SMAN 52 Jakarta</title>
+  <title>Hasil TKA 2025 - SMAN 52 Jakarta</title>
 
   <style>
     body {
@@ -20,9 +19,8 @@
     .card {
       background: #ffffff;
       padding: 2rem;
-      max-width: 420px;
+      max-width: 720px;
       width: 100%;
-      text-align: center;
       border-radius: 12px;
       box-shadow: 0 10px 25px rgba(0,0,0,0.08);
     }
@@ -69,13 +67,17 @@
     }
 
     #hasil {
-      margin-top: 1.5rem;
-      font-weight: bold;
+      margin-top: 1.2rem;
+    }
+
+    .nilai {
+      border-bottom: 1px dashed #ddd;
+      padding: 0.3rem 0;
     }
 
     footer {
-      margin-top: 1.5rem;
-      font-size: 0.8rem;
+      margin-top: 1rem;
+      font-size: 0.85rem;
       color: #777;
     }
   </style>
@@ -90,47 +92,80 @@
 
     <form onsubmit="cekTKA(event)">
       <input type="text" id="nama" placeholder="Nama Lengkap" required>
-      <input type="date" id="tglLahir" required>
+      <input type="date" id="tgl" required>
       <button type="submit">Cek Hasil TKA</button>
     </form>
 
     <div id="hasil"></div>
 
-    <footer>
-      © 2025 SMAN 52 Jakarta
-    </footer>
+    <footer>© 2025 SMAN 52 Jakarta</footer>
   </div>
 
   <script>
-    const dataTKA = [
-      { nama: "ABDUL JABARUDIN", tgl: "2007-04-12", hasil: "LULUS TKA" },
-      { nama: "AISYAH DWIYANTI", tgl: "2007-08-21", hasil: "LULUS TKA" }
-    ];
+    /* =====================================================
+       DATA TKA
+       Format KEY: "NAMA|YYYY-MM-DD"
+       ===================================================== */
 
-    function cekTKA(event) {
-      event.preventDefault();
+    const DATA_TKA = {
+      "ABDUL JABARUDIN|2007-04-12": {
+        nama: "ABDUL JABARUDIN",
+        tgl: "2007-04-12",
+        nilai: {
+          "Literasi": 78,
+          "Numerasi": 82,
+          "Bahasa Inggris": 80
+        }
+      },
+      "AISYAH DWIYANTI|2007-08-21": {
+        nama: "AISYAH DWIYANTI",
+        tgl: "2007-08-21",
+        nilai: {
+          "Literasi": 85,
+          "Numerasi": 79,
+          "Bahasa Inggris": 88
+        }
+      }
+      // ⬇⬇⬇ TAMBAHKAN DATA SISWA LAIN DI SINI ⬇⬇⬇
+    };
 
-      const namaInput = document.getElementById("nama").value.trim().toUpperCase();
-      const tglInput = document.getElementById("tglLahir").value;
+    function cekTKA(e) {
+      e.preventDefault();
+
+      const nama = document.getElementById("nama").value.trim().toUpperCase();
+      const tgl = document.getElementById("tgl").value;
       const hasilDiv = document.getElementById("hasil");
 
-      const siswa = dataTKA.find(
-        s => s.nama === namaInput && s.tgl === tglInput
-      );
+      const key = nama + "|" + tgl;
 
-      if (siswa) {
+      if (!DATA_TKA[key]) {
         hasilDiv.innerHTML = `
-          NAMA: <strong>${siswa.nama}</strong><br>
-          HASIL TKA: <span style="color: green;">${siswa.hasil}</span>
-        `;
-      } else {
-        hasilDiv.innerHTML = `
-          <span style="color: red;">
+          <span style="color:red;">
             Data tidak ditemukan.<br>
             Periksa kembali nama dan tanggal lahir.
           </span>
         `;
+        return;
       }
+
+      const siswa = DATA_TKA[key];
+
+      let html = `
+        <strong>Nama:</strong> ${siswa.nama}<br>
+        <strong>Tanggal Lahir:</strong> ${siswa.tgl}
+        <hr>
+        <strong>Nilai TKA:</strong>
+      `;
+
+      for (const mapel in siswa.nilai) {
+        html += `
+          <div class="nilai">
+            <strong>${mapel}</strong>: ${siswa.nilai[mapel]}
+          </div>
+        `;
+      }
+
+      hasilDiv.innerHTML = html;
     }
   </script>
 </body>
