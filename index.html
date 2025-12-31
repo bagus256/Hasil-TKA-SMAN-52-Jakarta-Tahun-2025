@@ -1,0 +1,137 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman Hasil TKA 2025 - SMAN 52 Jakarta</title>
+
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 2rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
+
+    img {
+      width: 100px;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+    }
+
+    h2 {
+      font-size: 1rem;
+      font-weight: normal;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-bottom: 0.8rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.6rem;
+      font-size: 1rem;
+      background-color: #0066cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #004d99;
+    }
+
+    #hasil {
+      margin-top: 1.5rem;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 1.5rem;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <img src="logo.jpg" alt="Logo SMAN 52 Jakarta">
+
+    <h1>Pengumuman Hasil TKA</h1>
+    <h2>Kelas XII • Tahun 2025<br>SMAN 52 Jakarta</h2>
+
+    <form onsubmit="cekTKA(event)">
+      <input type="text" id="nama" placeholder="Nama Lengkap" required>
+      <input type="date" id="tglLahir" required>
+      <button type="submit">Cek Hasil TKA</button>
+    </form>
+
+    <div id="hasil"></div>
+
+    <footer>
+      © 2025 SMAN 52 Jakarta
+    </footer>
+  </div>
+
+  <script>
+    const dataTKA = [
+      { nama: "ABDUL JABARUDIN", tgl: "2007-04-12", hasil: "LULUS TKA" },
+      { nama: "AISYAH DWIYANTI", tgl: "2007-08-21", hasil: "LULUS TKA" }
+    ];
+
+    function cekTKA(event) {
+      event.preventDefault();
+
+      const namaInput = document.getElementById("nama").value.trim().toUpperCase();
+      const tglInput = document.getElementById("tglLahir").value;
+      const hasilDiv = document.getElementById("hasil");
+
+      const siswa = dataTKA.find(
+        s => s.nama === namaInput && s.tgl === tglInput
+      );
+
+      if (siswa) {
+        hasilDiv.innerHTML = `
+          NAMA: <strong>${siswa.nama}</strong><br>
+          HASIL TKA: <span style="color: green;">${siswa.hasil}</span>
+        `;
+      } else {
+        hasilDiv.innerHTML = `
+          <span style="color: red;">
+            Data tidak ditemukan.<br>
+            Periksa kembali nama dan tanggal lahir.
+          </span>
+        `;
+      }
+    }
+  </script>
+</body>
+</html>
